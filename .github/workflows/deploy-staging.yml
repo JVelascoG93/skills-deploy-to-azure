@@ -56,7 +56,7 @@ jobs:
         with:
           registry: ${{ env.IMAGE_REGISTRY_URL }}
           username: ${{ github.actor }}
-          password: ${{ secrets.CR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }} # MODIFICADO: Cambiado CR_PAT por GITHUB_TOKEN
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
@@ -78,7 +78,6 @@ jobs:
     needs: Build-Docker-Image
     name: Deploy app container to Azure
     steps:
-      # MODIFICADO: Login adaptado para usar OIDC con identificadores individuales
       - name: "Login via Azure CLI (OIDC)"
         uses: azure/login@v2
         with:
@@ -90,7 +89,7 @@ jobs:
         with:
           login-server: ${{env.IMAGE_REGISTRY_URL}}
           username: ${{ github.actor }}
-          password: ${{ secrets.CR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }} # MODIFICADO: Cambiado CR_PAT por GITHUB_TOKEN
 
       - name: Deploy web app container
         uses: azure/webapps-deploy@v3
@@ -102,6 +101,9 @@ jobs:
         uses: azure/CLI@v2
         with:
           inlineScript: |
+            az logout
+            az cache purge
+            az account clear
             az logout
             az cache purge
             az account clear
