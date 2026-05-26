@@ -10,11 +10,11 @@ env:
   AZURE_APP_PLAN: actions-ttt-deployment
   AZURE_LOCATION: '"East US"'
   ###############################################
-  ### Replace JVelascoG93 with GitHub username ###
+  ### Replace <username> with GitHub username ###
   ###############################################
-  AZURE_WEBAPP_NAME: JVelascoG93-ttt-app
+  AZURE_WEBAPP_NAME: <username>-ttt-app
 
-# AGREGADO: Se requieren permisos explícitos para solicitar el token OIDC a GitHub
+# Requerido de forma global para que GitHub emita los tokens federados OIDC
 permissions:
   id-token: write
   contents: read
@@ -27,7 +27,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Azure login
+      # MODIFICADO: Login adaptado para usar OIDC con identificadores individuales
+      - name: Azure login (OIDC)
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -56,14 +57,13 @@ jobs:
 
   destroy-azure-resources:
     runs-on: ubuntu-latest
-
     if: contains(github.event.pull_request.labels.*.name, 'destroy environment')
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Azure login
+      # MODIFICADO: Login adaptado para usar OIDC con identificadores individuales
+      - name: Azure login (OIDC)
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
