@@ -27,7 +27,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Azure login
+      # MODIFICADO: Login adaptado para usar OIDC con identificadores individuales
+      - name: Azure login (OIDC)
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -56,14 +57,13 @@ jobs:
 
   destroy-azure-resources:
     runs-on: ubuntu-latest
-
     if: contains(github.event.pull_request.labels.*.name, 'destroy environment')
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Azure login
+      # MODIFICADO: Login adaptado para usar OIDC con identificadores individuales
+      - name: Azure login (OIDC)
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
